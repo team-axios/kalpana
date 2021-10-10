@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'package:kalpana/theme/font_styling.dart';
 import 'package:kalpana/theme/theme.dart';
 
@@ -20,12 +24,21 @@ class _NewThoughtScreenState extends State<NewThoughtScreen> {
     return SafeArea(
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton:
-            FloatingActionButton.extended(
-              backgroundColor: primaryAppColor,
-              onPressed: () {}, label: Text('Save'), icon: Icon(
-              FontAwesomeIcons.save
-            ),),
+        floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: primaryAppColor,
+          onPressed: () async {
+            await http.post(
+              Uri.parse("http://34.212.225.15:8000/note/new/"),
+              body: json.encode({
+                "title": _titleController.text,
+                "note": _detailsController.text
+              })
+            );
+            Navigator.pop(context);
+          },
+          label: Text('Save'),
+          icon: Icon(FontAwesomeIcons.save),
+        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
@@ -60,7 +73,8 @@ class _NewThoughtScreenState extends State<NewThoughtScreen> {
                                 fillColor: primaryAppColor,
                                 hoverColor: primaryAppColor,
                                 focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: primaryAppColor),
+                                  borderSide:
+                                      BorderSide(color: primaryAppColor),
                                 ),
                               ),
                               onChanged: (value) {
@@ -84,10 +98,9 @@ class _NewThoughtScreenState extends State<NewThoughtScreen> {
                                 horizontal: 20.0, vertical: 30),
                             child: Container(
                               decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border(),
+                                color: Colors.white,
+                                border: Border(),
                               ),
-                            
                               child: Align(
                                 alignment: Alignment.topRight,
                                 child: TextField(
@@ -126,13 +139,10 @@ class _NewThoughtScreenState extends State<NewThoughtScreen> {
                             ),
                           ),
                         ),
-    
-                        
-                     
                       ],
                     )),
               ),
-                 SizedBox(height: 70.0)
+              SizedBox(height: 70.0)
             ],
           ),
         ),

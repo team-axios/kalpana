@@ -1,21 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:kalpana/theme/font_styling.dart';
+
+import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:audioplayer/audioplayer.dart';
+
+import 'package:kalpana/theme/font_styling.dart';
 import 'package:kalpana/theme/icon_styling.dart';
 import 'package:kalpana/theme/theme.dart';
 
 class CardView extends StatefulWidget {
-  const CardView({Key? key}) : super(key: key);
+  const CardView(
+      {Key? key, required this.title, required this.details, required this.url})
+      : super(key: key);
+  final String title, details, url;
 
   @override
   _CardViewState createState() => _CardViewState();
 }
 
 class _CardViewState extends State<CardView> {
-  var title = 'An amazing day';
   var date = '30 March';
-  var content =
-      "I woke up, ate breakfast and cleaned myself. I think I need to take Bobby to the vet tomorrow before I go to work. Maybe I should also take him to the groomer...";
+
+  bool isPlaying = false;
+  AudioPlayer audioPlugin = AudioPlayer();
+
+  togglePlaying(){
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          "Fetching tone from cloud, this might take some time"
+        ),
+      )
+    );
+    if(!isPlaying){
+      audioPlugin.play(widget.url);
+    } else {
+      audioPlugin.stop();
+    }
+    setState(() {
+      isPlaying = !isPlaying;
+    });
+  }
 
   var isProcessed = false;
   @override
@@ -35,7 +60,7 @@ class _CardViewState extends State<CardView> {
                     padding: const EdgeInsets.only(
                         top: 25.0, left: 28, bottom: 25.0),
                     child: Text(
-                      title,
+                      widget.title,
                       style: cardTitleStyle,
                     ),
                   ),
@@ -67,12 +92,12 @@ class _CardViewState extends State<CardView> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
                 child: Text(
-                  content,
+                  widget.details.substring(0, widget.details.length < 150 ? widget.details.length - 1 : 150) + "...",
                   softWrap: true,
                   style: cardContentStyle,
                 ),
               ),
-              isProcessed == true
+              widget.url.length != 0
                   ? Padding(
                       padding: const EdgeInsets.only(left: 25.0),
                       child: Row(children: [
@@ -81,11 +106,19 @@ class _CardViewState extends State<CardView> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25)),
                                 primary: primaryAppColor),
-                            onPressed: () {},
+                            onPressed: () => togglePlaying(),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 10),
-                              child: Text('Play'),
+                              child: Text(
+                                'Play',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  fontStyle: FontStyle.normal,
+                                  color: Colors.white
+                                )
+                              ),
                             )),
                         Spacer()
                       ]),

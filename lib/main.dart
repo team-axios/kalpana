@@ -13,10 +13,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SafeArea(child:
-      // DetailScreen() 
-      //NewThoughtScreen()
-      HomeScreen()
+      debugShowCheckedModeBanner: false,
+      home: SafeArea(
+        child: HomeScreen()
       )
     );
   }
